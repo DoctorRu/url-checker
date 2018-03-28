@@ -13,4 +13,4 @@ Little app with access control to check if a url is up or down.
 
 #### To generate SSL certificate
 
-    openssl req -newkey rsa:2048 -new -nodes -x509 -days 3650 -keyout key.pem -out cert.pe
+    openssl req -newkey rsa:2048 -new -nodes -x509 -days 3650 -keyout key.pem -out cert.pem
