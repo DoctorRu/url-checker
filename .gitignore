@@ -65,4 +65,4 @@ typings/
 
 # keys
 keys.js
-config/key.pem
+https/key.pem
