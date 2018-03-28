@@ -65,3 +65,4 @@ typings/
 
 # keys
 keys.js
+config/key.pem

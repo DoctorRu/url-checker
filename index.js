@@ -1,9 +1,38 @@
 const http = require('http');
+const https = require('https');
 const stringDecoder = require('string_decoder').StringDecoder;
 const url = require('url');
+const fs = require('fs');
 
-const server = http.createServer(function (req, res) {
+const config = require('./config');
+
+
+const httpServer = http.createServer(function (req, res) {
+    unifiedServer(res, res)
+});
+
+
+httpServerOptions = {
+    'key' : fs.readFileSync('./https/key.pem'),
+    'cert': fs.readFileSync('./https/cert.pem')
     
+};
+
+const httpsServer = https.createServer(httpServerOptions, function (req, res) {
+    unifiedServer(res, res)
+});
+
+
+httpServer.listen(config.httpPort, function () {
+    console.log(`The server is running on port ${config.httpPort} - ${config.envName} mode`);
+});
+
+
+httpsServer.listen(config.httpsPort, function () {
+    console.log(`The server is running on port ${config.httpsPort} - ${config.envName} mode`);
+});
+
+let unifiedServer = (req, res) => {
     let parsedUrl = url.parse(req.url, true);
     let path = parsedUrl.pathname;
     let trimmedPath = path.replace(/^\/+|\/+$/g, '');
@@ -31,7 +60,7 @@ const server = http.createServer(function (req, res) {
             'payload': buffer
         };
         
-        chosenHandler(data, function(statusCode, payload){
+        chosenHandler(data, function (statusCode, payload) {
             
             statusCode = typeof(statusCode) == 'number' ? statusCode : 200;
             payload = typeof(payload) == 'object' ? payload : {};
@@ -47,18 +76,12 @@ const server = http.createServer(function (req, res) {
             console.log('Headers> ', headers);
             console.log('Status code> ', statusCode);
             console.log('Payload> ', payload);
-        
+            
         });
         
         
     });
-    
-});
-
-
-server.listen(3000, function () {
-    console.log('The server is running on 3000');
-});
+}
 
 let handlers = {};
 
