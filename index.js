@@ -1,25 +1,42 @@
 const http = require('http');
 const https = require('https');
-const stringDecoder = require('string_decoder').StringDecoder;
+const StringDecoder = require('string_decoder').StringDecoder;
 const url = require('url');
 const fs = require('fs');
 
 const config = require('./config');
+// const _data = require('./lib/data');
+
+// _data.create('test','newfile', {'foo':'bar'}, function(err){
+//     console.log('this is the error', err);
+// });
+
+// _data.read('test','newfile', function(err, data){
+//     console.log('this is the error', err, 'and this was the data ', data);
+// });
+//
+// _data.update('test','newfile',{'fizz':'buzz'} ,function(err){
+//     console.log('this is the error', err);
+// });
+
+// _data.delete('test', 'newfile', function (err) {
+//     console.log('this is the error', err);
+// });
 
 
 const httpServer = http.createServer(function (req, res) {
-    unifiedServer(res, res)
+    unifiedServer(req, res)
 });
 
 
 httpServerOptions = {
-    'key' : fs.readFileSync('./https/key.pem'),
+    'key': fs.readFileSync('./https/key.pem'),
     'cert': fs.readFileSync('./https/cert.pem')
     
 };
 
 const httpsServer = https.createServer(httpServerOptions, function (req, res) {
-    unifiedServer(res, res)
+    unifiedServer(req, res)
 });
 
 
@@ -40,7 +57,7 @@ let unifiedServer = (req, res) => {
     
     let headers = req.headers;
     let queryStringObject = parsedUrl.query;
-    let decoder = new stringDecoder('utf-8');
+    let decoder = new StringDecoder('utf-8');
     let buffer = '';
     
     req.on('data', data => {
@@ -81,12 +98,12 @@ let unifiedServer = (req, res) => {
         
         
     });
-}
+};
 
 let handlers = {};
 
-handlers.sample = (data, callback) => {
-    callback(406, {'name': 'sample handler'});
+handlers.ping = (data, callback) => {
+    callback(200);
 };
 
 handlers.notFound = (data, callback) => {
@@ -94,5 +111,7 @@ handlers.notFound = (data, callback) => {
 };
 
 let router = {
-    'sample': handlers.sample
+    'ping': handlers.ping
 };
+
+
