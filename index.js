@@ -4,7 +4,21 @@ const StringDecoder = require('string_decoder').StringDecoder;
 const url = require('url');
 const fs = require('fs');
 const handlers = require('./lib/handlers');
-const config = require('./config');
+const config = require('./lib/config');
+const helpers = require('./lib/helpers');
+
+
+// Json post eg:
+//
+// {
+//     "firstName" : "Alice",
+//     "lastName"  : "Bradengburg",
+//     "phone"		: "5551234567",
+//     "password"	:	"thisIsAPassword",
+//     "tosAgreement": true
+// }
+//
+
 // const _data = require('./lib/data');
 
 // _data.create('test','newfile', {'foo':'bar'}, function(err){
@@ -68,13 +82,13 @@ let unifiedServer = (req, res) => {
         buffer += decoder.end();
         
         let chosenHandler = typeof(router[ trimmedPath ]) !== 'undefined' ? router[ trimmedPath ] : handlers.notFound;
-        
+    
         let data = {
-            'trimmedPath': trimmedPath,
-            'queryStringObject ': queryStringObject,
-            'method': method,
-            'headers': headers,
-            'payload': buffer
+            'trimmedPath' : trimmedPath,
+            'queryStringObject' : queryStringObject,
+            'method' : method,
+            'headers' : headers,
+            'payload' : helpers.parseJsonToObject(buffer)
         };
         
         chosenHandler(data, function (statusCode, payload) {
@@ -88,11 +102,11 @@ let unifiedServer = (req, res) => {
             res.writeHead(statusCode);
             res.end(payloadString);
             
-            console.log(`Request> ${trimmedPath}\nMethod> ${method}`);
-            console.log('Query> ', queryStringObject);
-            console.log('Headers> ', headers);
+            // console.log(`Request> ${trimmedPath}\nMethod> ${method}`);
+            // console.log('Query> ', queryStringObject);
+            // console.log('Headers> ', headers);
             console.log('Status code> ', statusCode);
-            console.log('Payload> ', payload);
+            console.log('Payload> ', payloadString);
             
         });
         
